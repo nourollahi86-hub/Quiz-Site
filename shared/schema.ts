@@ -4,6 +4,7 @@ import { z } from "zod";
 export const questionSchema = z.object({
   id: z.string(),
   text: z.string().min(1, "Question text is required"),
+  direction: z.enum(["ltr", "rtl"]).default("ltr"),
 });
 
 export type Question = z.infer<typeof questionSchema>;

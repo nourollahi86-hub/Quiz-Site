@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, Send } from "lucide-react";
 import { type Question } from "@shared/schema";
+import { renderFormattedText } from "@/lib/formatText";
 
 interface StudentViewProps {
   questions: Question[];
@@ -25,12 +26,6 @@ export default function StudentView({ questions, onSubmit, studentName }: Studen
   };
 
   const handleSubmit = () => {
-    const unansweredQuestions = questions.filter(q => !answers[q.id]);
-    if (unansweredQuestions.length > 0) {
-      alert(`Please answer all questions. ${unansweredQuestions.length} question(s) remaining.`);
-      return;
-    }
-
     const booleanAnswers: Record<string, boolean> = {};
     Object.entries(answers).forEach(([id, value]) => {
       booleanAnswers[id] = value === "true";
@@ -48,19 +43,9 @@ export default function StudentView({ questions, onSubmit, studentName }: Studen
           <CardContent className="py-12 text-center">
             <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-primary" />
             <h2 className="text-2xl font-semibold mb-2">Quiz Submitted Successfully!</h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-muted-foreground">
               Thank you, {studentName}. Your answers have been recorded.
             </p>
-            <Button
-              data-testid="button-submit-another"
-              onClick={() => {
-                setSubmitted(false);
-                setAnswers({});
-                console.log("Ready for new submission");
-              }}
-            >
-              Submit Another Response
-            </Button>
           </CardContent>
         </Card>
       </div>
@@ -80,13 +65,11 @@ export default function StudentView({ questions, onSubmit, studentName }: Studen
     );
   }
 
-  const allAnswered = questions.every(q => answers[q.id]);
-
   return (
     <div className="max-w-3xl mx-auto px-8 py-12 pb-32">
       <div className="mb-8">
         <h2 className="text-3xl font-bold tracking-tight mb-2">Campbell Evaluation Exam</h2>
-        <p className="text-muted-foreground">Answer all questions and submit when ready</p>
+        <p className="text-muted-foreground">Answer the questions and submit when ready</p>
       </div>
 
       <div className="space-y-6">
@@ -100,7 +83,17 @@ export default function StudentView({ questions, onSubmit, studentName }: Studen
                 >
                   {index + 1}
                 </Badge>
-                <p className="text-lg leading-relaxed flex-1">{question.text}</p>
+                <div className="text-lg leading-relaxed flex-1" dir={question.direction}>
+                  {renderFormattedText(question.text).map((part, idx) => {
+                    if (typeof part === 'string') {
+                      return <span key={idx}>{part}</span>;
+                    } else if (part.type === 'bold') {
+                      return <strong key={idx}>{part.content}</strong>;
+                    } else if (part.type === 'italic') {
+                      return <em key={idx}>{part.content}</em>;
+                    }
+                  })}
+                </div>
               </div>
               
               <RadioGroup
@@ -143,15 +136,12 @@ export default function StudentView({ questions, onSubmit, studentName }: Studen
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg">
         <div className="max-w-3xl mx-auto px-8 py-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            {allAnswered 
-              ? "All questions answered" 
-              : `${Object.keys(answers).length} of ${questions.length} answered`}
+            {`${Object.keys(answers).length} of ${questions.length} answered`}
           </p>
           <Button
             data-testid="button-submit-quiz"
             size="lg"
             onClick={handleSubmit}
-            disabled={!allAnswered}
             className="gap-2 px-12"
           >
             <Send className="w-4 h-4" />

@@ -21,10 +21,12 @@ export default function InstructorView({ questions, onQuestionsChange }: Instruc
     const newQuestions: Question[] = lines.map((text, index) => ({
       id: `q-${Date.now()}-${index}`,
       text: text.trim(),
+      direction: textDirection,
     }));
     
     onQuestionsChange([...questions, ...newQuestions]);
     setQuestionText("");
+    setTextDirection("ltr");
     console.log(`Uploaded ${newQuestions.length} questions`);
   };
 
@@ -71,7 +73,7 @@ export default function InstructorView({ questions, onQuestionsChange }: Instruc
     <div className="max-w-3xl mx-auto px-8 py-12 space-y-8">
       <div>
         <h2 className="text-3xl font-bold tracking-tight mb-2">Quiz Management</h2>
-        <p className="text-muted-foreground">Upload and manage your True/False questions</p>
+        <p className="text-muted-foreground">Create and manage your True/False questions</p>
       </div>
 
       <Card>
