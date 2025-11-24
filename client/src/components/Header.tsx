@@ -14,7 +14,7 @@ export default function Header({ role, userName, onLogout }: HeaderProps) {
     <header className="h-16 border-b flex items-center px-8">
       <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logoImage} alt="Campbell Evaluation Exam" className="h-6 w-auto" />
+          <img src={logoImage} alt="Campbell Evaluation Exam" className="h-12 w-auto" />
           <h1 className="text-xl font-semibold tracking-tight">Campbell Evaluation Exam</h1>
         </div>
         
