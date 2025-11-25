@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { submissionSchema } from "@shared/schema";
+import { appendAnswers } from "./sheets";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
@@ -14,6 +15,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const body = submissionSchema.parse(req.body);
       await storage.submitQuiz(body);
+      
+      const { studentName, answers } = body;
+      await appendAnswers(studentName, answers);
+
       res.json({ success: true });
     } catch (error) {
       console.error("Error submitting quiz:", error);
