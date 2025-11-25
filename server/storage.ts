@@ -1,5 +1,5 @@
 import { type Question, type Submission } from "@shared/schema";
-import { appendSubmissionToSheet } from "./google-sheets";
+import { appendAnswers } from "./google-sheets";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -27,7 +27,7 @@ export class MemStorage implements IStorage {
 
   async submitQuiz(submission: Submission): Promise<void> {
     // Save to Google Sheets
-    await appendSubmissionToSheet(submission.studentName, submission.answers);
+    await appendAnswers(submission.studentName, submission.answers);
   }
 }
 
